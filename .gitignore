@@ -1,5 +1,16 @@
-# venv
+# Editors
+.vscode/
+.idea/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+src/**/__pycache__/
+
+# Environments
 fastapi_tutorial_env/
 
-# environment variables file
+# Dot file
 .env
