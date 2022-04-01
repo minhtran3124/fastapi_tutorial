@@ -1,0 +1,5 @@
+# venv
+fastapi_tutorial_env/
+
+# environment variables file
+.env
