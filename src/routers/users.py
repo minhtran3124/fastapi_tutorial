@@ -3,33 +3,43 @@ import sys
 sys.path.append('..')
 
 from jose import jwt, JWTError
+from typing import List
 
 from fastapi import Depends, HTTPException, status, APIRouter
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
 from config import settings
-from database import SessionLocal, engine, get_db
-from schemas.user import CreateUser
+from database import engine, get_db
+from schemas.user import UserIn, UserOut
 
 from utils.password import  get_password_hash
-from utils.token import create_access_token, token_exception
 
 import models
 
 SECRET_KEY = settings.secret_key
 ALGORITHM = settings.algorithm
 
-
 models.Base.metadata.create_all(bind=engine)
-
-oauth_bearer = OAuth2PasswordBearer(tokenUrl="token")
-
+oauth_bearer = OAuth2PasswordBearer(tokenUrl='token')
 router = APIRouter()
 
 
+@router.get('/', response_model=List[UserOut], status_code=status.HTTP_200_OK)
+async def get_users(db: Session = Depends(get_db)):
+    """
+    Get users
+    """
+    try:
+        users =  db.query(models.Users).all()
+        return users
+    except:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail='Username already exists')
+
+
 @router.post('/', status_code=status.HTTP_201_CREATED)
-async def create_new_user(create_user: CreateUser,
+async def create_new_user(create_user: UserIn,
                           db: Session = Depends(get_db)):
     """
     Create a new user
