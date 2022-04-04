@@ -6,11 +6,12 @@ from schemas.todo import Todo
 import models
 from database import SessionLocal, engine
 from sqlalchemy.orm import Session
-from .auth import get_current_user, get_user_exception
+from .users import get_current_user, get_user_exception
 
 router = APIRouter()
 
 models.Base.metadata.create_all(bind=engine)
+
 
 def get_db():
     try:
