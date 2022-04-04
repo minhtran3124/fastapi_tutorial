@@ -12,3 +12,6 @@ python-multipart==0.0.5
 ecdsa==0.17.0
 httptools==0.3.0
 passlib==1.7.4
+
+fastapi-admin==1.0.3
+sqladmin==0.1.7
