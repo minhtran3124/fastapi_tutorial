@@ -2,11 +2,19 @@
 
 ## What is FastAPI
 
-Updating ...
+FastAPI framework, high performance, easy to learn, fast to code, ready for production
+
+
+
+FastAPI is a modern, fast (high-performance), web framework for building APIs with Python 3.6+ based on standard Python type hints.
+
 
 ## Technical Stacks
 
-Updating ...
+- [FastAPI](https://fastapi.tiangolo.com/)
+- [SQLAlchemy](https://www.sqlalchemy.org/)
+- [sqladmin](https://github.com/aminalaee/sqladmin)
+- [Uvicorn](https://www.uvicorn.org/)
 
 ## Required
 
@@ -18,11 +26,46 @@ Updating ...
 
 ## Project Structure
 
-Updating ...
+```
+src
+ ┣ admins
+ ┃ ┣ __init__.py
+ ┃ ┣ todo.py
+ ┃ ┗ user.py
+ ┣ base
+ ┃ ┣ exceptions.py
+ ┃ ┗ model.py
+ ┣ models
+ ┃ ┣ __init__.py
+ ┃ ┣ todo.py
+ ┃ ┗ user.py
+ ┣ routers
+ ┃ ┣ __init__.py
+ ┃ ┣ auth.py
+ ┃ ┗ todos.py
+ ┣ schemas
+ ┃ ┣ __init__.py
+ ┃ ┣ todo.py
+ ┃ ┗ user.py
+ ┣ __init__.py
+ ┣ apis.py
+ ┣ config.py
+ ┣ constants.py
+ ┣ database.py
+ ┗ main.py
+```
 
 ## APIs
 
 Updating ...
+
+### Links
+
+- API Doc: `http://localhost:8000/docs`
+- Admin: `http://localhost:8000/admin/`
+- Endpoints:
+    - user: `http://localhost:8000/api/v1/users`
+    - todo: `http://localhost:8000/api/v1/todos`
 
 ## Setup
 
