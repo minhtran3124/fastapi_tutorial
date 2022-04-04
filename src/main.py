@@ -1,7 +1,10 @@
 import uvicorn
 from fastapi import FastAPI
+from sqladmin import Admin, ModelAdmin
 
 import models
+from admins import TodoAdmin, UserAdmin
+
 from database import engine
 from config import settings
 
@@ -10,10 +13,15 @@ from constants import API_V1
 
 
 app = FastAPI()
+admin = Admin(app, engine)
 
 models.Base.metadata.create_all(bind=engine)
 
 app.include_router(api_router, prefix=API_V1)
+
+
+admin.register_model(UserAdmin)
+admin.register_model(TodoAdmin)
 
 
 if __name__ == '__main__':
