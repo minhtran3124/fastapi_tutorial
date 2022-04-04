@@ -54,6 +54,9 @@ function print_helper() {
 
     run_app:
         Run application
+
+    activate_env:
+        Activate environment
 =========================================================================="
 }
 
