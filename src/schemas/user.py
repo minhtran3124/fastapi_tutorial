@@ -8,9 +8,6 @@ class UserBase(BaseModel):
     first_name: str
     last_name: str
 
-    class Config:
-        orm_mode = True
-
 
 class UserIn(UserBase):
     password: str
@@ -18,6 +15,9 @@ class UserIn(UserBase):
 
 class UserOut(UserBase):
     id: int
+
+    class Config:
+        orm_mode = True
 
 
 class UserInDB(UserBase):

@@ -3,11 +3,12 @@ import sys
 sys.path.append('..')
 
 from jose import jwt, JWTError
-from typing import List
 
 from fastapi import Depends, HTTPException, status, APIRouter
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
+
+from fastapi_pagination import Page, paginate
 
 from config import settings
 from database import engine, get_db
@@ -25,18 +26,17 @@ oauth_bearer = OAuth2PasswordBearer(tokenUrl='token')
 router = APIRouter()
 
 
-@router.get('/', response_model=List[UserOut], status_code=status.HTTP_200_OK)
+@router.get('/', response_model=Page[UserOut], status_code=status.HTTP_200_OK)
 async def get_users(db: Session = Depends(get_db)):
     """
     Get users
     """
     try:
         users =  db.query(models.Users).all()
-        return users
+        return paginate(users)
     except:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail='Username already exists')
-
 
 @router.post('/', status_code=status.HTTP_201_CREATED)
 async def create_new_user(create_user: UserIn,
@@ -99,3 +99,4 @@ def get_user_exception():
         headers={'WWW-Authenticate': 'Bearer'},
     )
     return credentials_exception
+

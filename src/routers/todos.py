@@ -2,30 +2,25 @@ import sys
 sys.path.append('..')
 
 from fastapi import Depends, HTTPException, APIRouter
-from schemas.todo import Todo
-import models
-from database import SessionLocal, engine
 from sqlalchemy.orm import Session
-from .users import get_current_user, get_user_exception
+from fastapi_pagination import Page, paginate
+
+from database import SessionLocal, engine, get_db
+from schemas.todo import Todo
+
+import models
+
+from routers.users import get_current_user, get_user_exception
 
 router = APIRouter()
 
 models.Base.metadata.create_all(bind=engine)
 
 
-def get_db():
-    try:
-        db = SessionLocal()
-        yield db
-    finally:
-        db.close()
-
-@router.get('/')
+@router.get('/', response_model=Page[Todo])
 async def read_all(db: Session = Depends(get_db)):
     data =  db.query(models.Todos).all()
-    return {
-        "data" : data
-    }
+    return paginate(data)
 
 @router.get('/{todo_id}')
 async def read_todo(todo_id: int,

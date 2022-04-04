@@ -1,6 +1,8 @@
 import uvicorn
 from fastapi import FastAPI
-from sqladmin import Admin, ModelAdmin
+from sqladmin import Admin
+
+from fastapi_pagination import add_pagination
 
 import models
 from admins import TodoAdmin, UserAdmin
@@ -22,6 +24,8 @@ app.include_router(api_router, prefix=API_V1)
 
 admin.register_model(UserAdmin)
 admin.register_model(TodoAdmin)
+
+add_pagination(app)
 
 
 if __name__ == '__main__':
