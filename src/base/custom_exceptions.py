@@ -10,8 +10,9 @@ class UnicornException(Exception):
 
 
 # Custom error message for validation handler
-async def validation_exception_handler(request: Request,
-                                       exc: RequestValidationError):
+async def validation_exception_handler(
+    request: Request, exc: RequestValidationError
+) -> JSONResponse:
     detail = []
     for error in exc.errors():
         detail.append({
