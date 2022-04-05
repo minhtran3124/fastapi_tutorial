@@ -12,7 +12,7 @@ from constants import API_V1
 from admins import TodoAdmin, UserAdmin
 from database import engine
 from config import settings
-from apis import router as api_router
+from routers.v1.api import router as api_router
 
 import models
 

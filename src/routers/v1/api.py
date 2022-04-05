@@ -1,5 +1,6 @@
 from fastapi import APIRouter
-from routers import auth, todos, users
+from routers.v1.endpoints import auth, todos, users
+
 
 router = APIRouter()
 
