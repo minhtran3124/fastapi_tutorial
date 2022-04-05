@@ -2,28 +2,21 @@ import sys
 
 sys.path.append('..')
 
-from jose import jwt, JWTError
-
 from fastapi import Depends, HTTPException, status, APIRouter
-from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
 from fastapi_pagination import Page, paginate
 
-from config import settings
 from database import engine, get_db
 from schemas.user import UserIn, UserOut
 
+from routers.dependencies import get_current_user, get_user_exception
 from utils.password import  get_password_hash
 from constants import SOMETHING_WENT_WRONG
 
 import models
 
-SECRET_KEY = settings.secret_key
-ALGORITHM = settings.algorithm
-
 models.Base.metadata.create_all(bind=engine)
-oauth_bearer = OAuth2PasswordBearer(tokenUrl='token')
 router = APIRouter()
 
 
@@ -63,39 +56,3 @@ async def create_new_user(create_user: UserIn,
         }
     except:
         raise HTTPException(status_code=400, detail='Username already exists')
-
-
-async def get_current_user(token: str = Depends(oauth_bearer)):
-    """
-    Get the user details from the JWT token
-    Args:
-        token (str, optional): [description]. Defaults to Depends(oauth_bearer).
-    Raises:
-        HTTPException: If user details not found in token
-        HTTPException: If token is not valid
-    Returns:
-        str: User details
-    """
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get('sub')
-        user_id: int = payload.get('id')
-        if username is None or user_id is None:
-            raise get_user_exception()
-        return {
-            'username': username,
-            'id': user_id
-        }
-    except JWTError:
-        raise get_user_exception()
-
-
-# Exceptions
-def get_user_exception():
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail='Could not validate credentials',
-        headers={'WWW-Authenticate': 'Bearer'},
-    )
-    return credentials_exception
-

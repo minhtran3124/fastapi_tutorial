@@ -5,12 +5,12 @@ from fastapi import Depends, HTTPException, APIRouter
 from sqlalchemy.orm import Session
 from fastapi_pagination import Page, paginate
 
-from database import SessionLocal, engine, get_db
+from database import engine, get_db
 from schemas.todo import Todo
+from routers.dependencies import get_current_user, get_user_exception
 
 import models
 
-from routers.users import get_current_user, get_user_exception
 
 router = APIRouter()
 
