@@ -1,31 +1,41 @@
 import uvicorn
-from fastapi import FastAPI
-from sqladmin import Admin
 
+from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
+
+from sqladmin import Admin
 from fastapi_pagination import add_pagination
 
-import models
+from base.custom_exceptions import validation_exception_handler
+from constants import API_V1
 from admins import TodoAdmin, UserAdmin
-
 from database import engine
 from config import settings
-
 from apis import router as api_router
-from constants import API_V1
 
+import models
 
-app = FastAPI()
-admin = Admin(app, engine)
 
 models.Base.metadata.create_all(bind=engine)
 
+app = FastAPI()
+
+# Include API router for application
 app.include_router(api_router, prefix=API_V1)
 
-
+# Initialize admin and register models
+admin = Admin(app, engine)
 admin.register_model(UserAdmin)
 admin.register_model(TodoAdmin)
 
+# Add pagination for applcation
 add_pagination(app)
+
+# Config for custom handle exception
+@app.exception_handler(RequestValidationError)
+async def custom_validation_exception_handler(request: Request,
+                                              exc: RequestValidationError):
+    return await validation_exception_handler(request, exc)
 
 
 if __name__ == '__main__':

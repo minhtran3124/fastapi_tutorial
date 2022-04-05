@@ -15,6 +15,7 @@ from database import engine, get_db
 from schemas.user import UserIn, UserOut
 
 from utils.password import  get_password_hash
+from constants import SOMETHING_WENT_WRONG
 
 import models
 
@@ -35,8 +36,7 @@ async def get_users(db: Session = Depends(get_db)):
         users =  db.query(models.Users).all()
         return paginate(users)
     except:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                            detail='Username already exists')
+        raise HTTPException(status_code=500, detail=SOMETHING_WENT_WRONG)
 
 @router.post('/', status_code=status.HTTP_201_CREATED)
 async def create_new_user(create_user: UserIn,
@@ -59,11 +59,10 @@ async def create_new_user(create_user: UserIn,
         db.commit()
 
         return {
-            "message": "User created successfully"
+            'message': 'User created successfully'
         }
     except:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail='Username already exists')
+        raise HTTPException(status_code=400, detail='Username already exists')
 
 
 async def get_current_user(token: str = Depends(oauth_bearer)):
