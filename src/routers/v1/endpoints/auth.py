@@ -83,5 +83,5 @@ async def signup(create_user: UserCreate, db: Session = Depends(get_db)):
         return {
             'message': 'User created successfully'
         }
-    except Exception as error:
+    except Exception:
         raise HTTPException(status_code=400, detail='Username already exists')
