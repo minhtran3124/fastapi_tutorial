@@ -1,13 +1,13 @@
 from datetime import timedelta
 
-from fastapi import Depends, APIRouter
+from fastapi import Depends, APIRouter, status, HTTPException
 from sqlalchemy.orm import Session
 
 from config import settings
 from database import engine, get_db
-from schemas.auth import LoginUser
+from schemas.user import UserLogin, UserCreate
 
-from utils.password import verify_password
+from utils.password import verify_password, get_password_hash
 from utils.token import create_access_token, token_exception
 
 import models
@@ -43,10 +43,7 @@ def authenticate_user(db, username: str, password: str):
 
 
 @router.post('/login')
-async def login(
-    auth_user: LoginUser,
-    db: Session = Depends(get_db)
-):
+async def login(auth_user: UserLogin, db: Session = Depends(get_db)):
     """
     OAuth2 compatible token login, get an access token for future requests
     """
@@ -63,3 +60,28 @@ async def login(
         'access_token': access_token,
         'token_type': 'bearer'
     }
+
+@router.post('/signup', status_code=status.HTTP_201_CREATED)
+async def signup(create_user: UserCreate, db: Session = Depends(get_db)):
+    """
+    Create a new user
+    """
+    try:
+        create_user_model = models.Users()
+        create_user_model.username = create_user.username
+        create_user_model.email = create_user.email
+        create_user_model.first_name = create_user.first_name
+        create_user_model.last_name = create_user.last_name
+
+        hash_password = get_password_hash(create_user.password)
+        create_user_model.hashed_password = hash_password
+        create_user_model.is_active = True
+
+        db.add(create_user_model)
+        db.commit()
+
+        return {
+            'message': 'User created successfully'
+        }
+    except Exception as error:
+        raise HTTPException(status_code=400, detail='Username already exists')
