@@ -4,6 +4,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
 from config import settings
+from routers.v1.constants import UNAUTHORIZED_ERROR_MESSAGE
 
 SECRET_KEY = settings.secret_key
 ALGORITHM = settings.algorithm
@@ -27,11 +28,13 @@ async def get_current_user(token: str = Depends(oauth_bearer)):
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get('sub')
         user_id: int = payload.get('id')
+
         if username is None or user_id is None:
             raise get_user_exception()
+
         return {
-            'username': username,
-            'id': user_id
+            'id': user_id,
+            'username': username
         }
     except JWTError:
         raise get_user_exception()
@@ -43,7 +46,7 @@ def get_user_exception():
     """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail='Could not validate credentials',
+        detail=UNAUTHORIZED_ERROR_MESSAGE,
         headers={'WWW-Authenticate': 'Bearer'},
     )
     return credentials_exception
